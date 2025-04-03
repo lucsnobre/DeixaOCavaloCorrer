@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 30%;
+            background: #f4f4f4;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+        }
+        .chat {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .chat-header {
+            padding: 15px;
+            background: #fff;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            font-weight: bold;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .message {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .message.sent {
+            justify-content: flex-end;
+        }
+        .message.received {
+            justify-content: flex-start;
+        }
+        .message-bubble {
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 60%;
+        }
+        .sent .message-bubble {
+            background: darkred;
+            color: white;
+        }
+        .received .message-bubble {
+            background: lightgray;
+            color: black;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .chat-input button {
+            background: darkred;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <input type="text" placeholder="Procure por um contato...">
+        <div class="chat-list" id="chatList"></div>
+    </div>
+    <div class="chat">
+        <div class="chat-header" id="chatHeader">Selecionar um chat</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Envie uma mensagem...">
+            <button id="sendMessage">Enviar</button>
+        </div>
+    </div>
+    <script>
+        const apiUrl = 'https://dashboard.render.com/web/srv-cvnccg2dbo4c73bi68ag/deploys/dep-cvnccgadbo4c73bi68e0';
+        
+        async function loadChats() {
+            const response = await fetch(apiUrl + '/chats');
+            const chats = await response.json();
+            const chatList = document.getElementById('chatList');
+            chatList.innerHTML = '';
+            chats.forEach(chat => {
+                const chatItem = document.createElement('div');
+                chatItem.innerText = chat.name;
+                chatItem.onclick = () => loadMessages(chat.id, chat.name);
+                chatList.appendChild(chatItem);
+            });
+        }
+        
+        async function loadMessages(chatId, chatName) {
+            document.getElementById('chatHeader').innerText = chatName;
+            const response = await fetch(`${apiUrl}/messages?chatId=${chatId}`);
+            const messages = await response.json();
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', msg.sent ? 'sent' : 'received');
+                const bubble = document.createElement('div');
+                bubble.classList.add('message-bubble');
+                bubble.innerText = msg.text;
+                messageDiv.appendChild(bubble);
+                chatMessages.appendChild(messageDiv);
+            });
+        }
+        
+        document.getElementById('sendMessage').addEventListener('click', async () => {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text) return;
+            // Enviar a mensagem para a API (substituir 'currentChatId' pelo id correto)
+            await fetch(`${apiUrl}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chatId: currentChatId, text })
+            });
+            input.value = '';
+            loadMessages(currentChatId, document.getElementById('chatHeader').innerText);
+        });
+        
+        loadChats();
+    </script>
+</body>
+</html>
