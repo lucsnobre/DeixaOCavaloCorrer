@@ -1,82 +1,123 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
+    <title>WhatsApp Web Clone</title>
     <style>
-        * {
+@font-face {
+    font-family: NeueJeba ;
+    src: url(./font/NeueHaasDisplayBold.ttf);
+}
+
+        body {
+            font-family: NeueJeba, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
             display: flex;
             height: 100vh;
+            background: #f7f7f7;
         }
-        .sidebar {
+        .container {
+            display: flex;
+            width: 100%;
+        }
+        .contacts {
             width: 30%;
-            background: #f4f4f4;
+            background: #F3F7F8;
             padding: 10px;
-            border-right: 1px solid #ccc;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+        }
+        .contacts h2 {
+            font-size: 27px;
+            padding: 10px;
+            color: #98a6ac;
+            border-bottom:1px solid#ddd ;
+            margin-top: -10px;
+        }
+        .contacts ul {
+            list-style: none;
+            padding: 0;
+        }
+        .contacts li {
+            padding: 30px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            position: relative;
+        }
+        .contacts li:hover, .contacts li.active {
+            background: #E1E9EC;
+        }
+        .contacts li.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: #b71c1c;
+          
+        }
+        .contacts img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10%;
         }
         .chat {
             width: 70%;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-        }
-        .chat-header {
-            padding: 15px;
             background: #fff;
-            border-bottom: 1px solid #ccc;
-            text-align: center;
-            font-weight: bold;
         }
-        .chat-messages {
-            flex: 1;
+        #chat-header {
             padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            background: #f0f0f0;
+        }
+        #chat-messages {
+            flex: 1;
+            padding: 10px;
             overflow-y: auto;
         }
         .message {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+            max-width: 60%;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
         }
         .message.sent {
-            justify-content: flex-end;
+            background: #b71c1c;
+            color: #fff;
+            align-self: flex-end;
         }
         .message.received {
-            justify-content: flex-start;
-        }
-        .message-bubble {
-            padding: 10px;
-            border-radius: 10px;
-            max-width: 60%;
-        }
-        .sent .message-bubble {
-            background: darkred;
-            color: white;
-        }
-        .received .message-bubble {
-            background: lightgray;
-            color: black;
+            background: #ddd;
+            color: #000;
+            align-self: flex-start;
         }
         .chat-input {
             display: flex;
-            padding: 10px;
-            border-top: 1px solid #ccc;
+            padding: 20px;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
         }
         .chat-input input {
             flex: 1;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 5px;
         }
         .chat-input button {
-            background: darkred;
-            color: white;
+            background: #b71c1c;
+            color: #fff;
             border: none;
             padding: 10px 15px;
             margin-left: 10px;
@@ -86,66 +127,80 @@
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <input type="text" placeholder="Procure por um contato...">
-        <div class="chat-list" id="chatList"></div>
+    <div class="container">
+        <aside class="contacts">
+            <h2>Meus chats</h2>
+            <ul id="contact-list"></ul>
+        </aside>
+        <main class="chat">
+            <div id="chat-header">Selecione um contato</div>
+            <div id="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="Envie uma mensagem...">
+                <button id="send-button">Enviar</button>
+            </div>
+        </main>
     </div>
-    <div class="chat">
-        <div class="chat-header" id="chatHeader">Selecionar um chat</div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input">
-            <input type="text" id="messageInput" placeholder="Envie uma mensagem...">
-            <button id="sendMessage">Enviar</button>
-        </div>
-    </div>
+
     <script>
-        const apiUrl = 'https://dashboard.render.com/web/srv-cvnccg2dbo4c73bi68ag/deploys/dep-cvnccgadbo4c73bi68e0';
-        
-        async function loadChats() {
-            const response = await fetch(apiUrl + '/chats');
-            const chats = await response.json();
-            const chatList = document.getElementById('chatList');
-            chatList.innerHTML = '';
-            chats.forEach(chat => {
-                const chatItem = document.createElement('div');
-                chatItem.innerText = chat.name;
-                chatItem.onclick = () => loadMessages(chat.id, chat.name);
-                chatList.appendChild(chatItem);
+        'use strict';
+
+        const phoneNumber = "11987876567";
+
+        async function getListaDeContatos(numero) {
+            const url = `https://giovanna-whatsapp.onrender.com/v1/whatsapp/contatos/${numero}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.dados_contato;
+        }
+
+        async function getListaDeConversas(numero) {
+            const url = `https://giovanna-whatsapp.onrender.com/v1/whatsapp/conversas?numero=${numero}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.dados_conversa;
+        }
+
+        async function renderContatos() {
+            const contacts = await getListaDeContatos(phoneNumber);
+            const contactList = document.getElementById("contact-list");
+            contactList.innerHTML = '';
+
+            contacts.forEach(contact => {
+                const li = document.createElement("li");
+                li.onclick = () => renderConversas(contact.name, li);
+                
+                const img = document.createElement("img");
+                img.src = "./img/perfil.png";
+                img.alt = contact.name;
+                
+                const span = document.createElement("span");
+                span.textContent = contact.name;
+                
+                li.appendChild(img);
+                li.appendChild(span);
+                contactList.appendChild(li);
             });
         }
-        
-        async function loadMessages(chatId, chatName) {
-            document.getElementById('chatHeader').innerText = chatName;
-            const response = await fetch(`${apiUrl}/messages?chatId=${chatId}`);
-            const messages = await response.json();
-            const chatMessages = document.getElementById('chatMessages');
+
+        async function renderConversas(contactName, contactElement) {
+            document.getElementById("chat-header").textContent = contactName;
+            document.querySelectorAll(".contacts li").forEach(li => li.classList.remove("active"));
+            contactElement.classList.add("active");
+            
+            const messages = await getListaDeConversas(phoneNumber);
+            const chatMessages = document.getElementById("chat-messages");
             chatMessages.innerHTML = '';
+
             messages.forEach(msg => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', msg.sent ? 'sent' : 'received');
-                const bubble = document.createElement('div');
-                bubble.classList.add('message-bubble');
-                bubble.innerText = msg.text;
-                messageDiv.appendChild(bubble);
-                chatMessages.appendChild(messageDiv);
+                const div = document.createElement("div");
+                div.classList.add("message", msg.remetente === phoneNumber ? "sent" : "received");
+                div.textContent = msg.texto;
+                chatMessages.appendChild(div);
             });
         }
-        
-        document.getElementById('sendMessage').addEventListener('click', async () => {
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
-            if (!text) return;
-            // Enviar a mensagem para a API (substituir 'currentChatId' pelo id correto)
-            await fetch(`${apiUrl}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chatId: currentChatId, text })
-            });
-            input.value = '';
-            loadMessages(currentChatId, document.getElementById('chatHeader').innerText);
-        });
-        
-        loadChats();
+
+        document.addEventListener("DOMContentLoaded", renderContatos);
     </script>
 </body>
 </html>
