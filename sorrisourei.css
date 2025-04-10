@@ -1,0 +1,258 @@
+@font-face {
+    font-family: NeueJeba ;
+    src: url(./font/NeueHaasDisplayBold.ttf);
+}
+
+@font-face {
+    font-family: QUEBADA ;
+    src: url(./font/NeueHaasDisplayMediu.ttf);
+}
+
+@font-face {
+    font-family: UMAWAVE;
+    src: url(./font/NeueHaasDisplayLight.ttf);
+}
+
+       /* Fundo com a imagem que você enviou */
+body {
+    font-family: NeueJeba, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background: url('./img/royal-aqua-abstract-design-de-fundo-criativo_851755-339404.jpg') no-repeat center center fixed;
+    background-size: cover;
+    cursor: url('./cursors/3d-simple-shadow.crs');
+}
+
+/* Seção de contatos com vidro fosco */
+.contacts {
+    width: 30%;
+    padding: 10px;
+    overflow-y: auto;
+    font-family: QUEBADA, sans-serif;
+    font-size: 27.7px;
+    color: #f9f9f9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-right: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.7);
+}
+
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+    
+        
+        
+        .contacts h2 {
+            font-size: 27px;
+            padding: 10px;
+            color: #f0e9e9;
+            border-bottom:1px solid#ddd ;
+            margin-top: -10px;
+            text-align: center;
+        }
+        .contacts ul {
+            list-style: none;
+            padding: 0;
+        }
+        .contacts li {
+            padding: 30px 30px 30px 40px; /* extra espaço à esquerda para o ::before */
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+            position: relative;
+            padding-top: 40px;
+        }
+        
+        .contacts li:hover {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+            transition: 0.3s ease;
+            border-radius: 12px;
+        }
+        
+        .contacts li.active {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.3);
+            transition: 0.3s ease;
+            border-radius: 12px;
+        }
+        
+      
+        
+        .contacts img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10%;
+            filter: drop-shadow(1px 0px 2px #000000);
+        }
+        .chat {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        #chat-header {
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            text-align:center;
+            
+            background: #F3F7F8;
+        }
+        #chat-messages {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .message {
+            padding: 12px 16px;
+            max-width: 60%;
+            font-size: 14px;
+        
+                border-radius: 18px;
+                background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+            
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.4;
+            font-family: QUEBADA, sans-serif;
+                position: relative;
+                overflow: hidden;
+                
+            
+        }
+        
+        .message.sent {
+            background-color: #0078c8; /* Science Blue */
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 120, 200, 0.3); /* Efeito de sombra suave */
+        }
+        
+        .message::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .message.sent .timestamp{
+            color: white;
+        }
+        
+        .message.received {
+            background-color: #64c8dc; /* Rushing Stream */
+            color: #ffffff;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 8px rgba(100, 200, 220, 0.3); /* Efeito de sombra suave */
+        }
+        
+        .timestamp {
+            display: block;
+            font-size: 11px;
+            color: #0c0c0c;
+            text-align: right;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        
+        .chat-input {
+            display: flex;
+            padding: 30px;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-gif {
+            position: absolute;
+            bottom: 130px;
+            right: 20px;
+            width: 50px; /* você pode ajustar o tamanho aqui */
+            height: auto;
+            pointer-events: none; /* para não atrapalhar o clique */
+            opacity: 0.9;
+            animation: floatGif 3s ease-in-out infinite;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.6); /* Fundo semi-transparente */
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1); /* Sombra interna suave */
+            font-family: UMAWAVE, sans-serif;
+            font-size: 16px;
+            color: #333;
+            transition: background 0.3s ease;
+        }
+        
+        .chat-input input::placeholder {
+            color: #a8a8a8;
+            
+        }
+        
+        .chat-input input:focus {
+            background: rgba(255, 255, 255, 0.9); /* Fundo mais opaco ao focar */
+            outline: none;
+        }
+        .chat-input button {
+            background: linear-gradient(to bottom, #008395, #469aa5); /* Gradiente de verde */
+            color: #fff;
+            border: 1px solid #008395;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px #004b55;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background: linear-gradient(to bottom, #008395, #089aad);
+            box-shadow: 0 5px #034149;
+            transform: translateY(-2px);
+            filter: brightness(1.2); /* Aumenta o brilho ao passar o mouse */
+        }
+        
+        .chat-input button:active {
+            box-shadow: 0 2px #008395;
+            transform: translateY(2px);
+        }
+
+        @keyframes floatGif {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-7px);
+            }
+        }
