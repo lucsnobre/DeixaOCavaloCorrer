@@ -27,7 +27,7 @@ async function renderContatos() {
         li.onclick = () => renderConversas(contact.nome, contact.nome, li);
 
         const img = document.createElement("img");
-        img.src = "./img/icon1.webp";
+        img.src = "./img/Icon1.webp";
         img.alt = contact.nome;
 
         const span = document.createElement("span");
